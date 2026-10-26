@@ -446,6 +446,15 @@
           assert latest.hardware.nvidia.open && latest.hardware.nvidia.prime.offload.enable;
           assert latest.hardware.nvidia.powerManagement.finegrained;
           pkgs.writeText "nvidia-on-media" latest.hardware.nvidia.package.version;
+        # The driver build on the media, which installed systems share
+        # (nvidia-on-media), has tools that start.
+        nvidia-tools = import ./nix/nvidia-tools-test.nix {
+          inherit pkgs;
+          packages = [
+            installer.config.hardware.nvidia.package
+            installer.config.specialisation.lts_kernel.configuration.hardware.nvidia.package
+          ];
+        };
         # The live media and installed systems use the caches this flake
         # advertises, with the same keys.
         binary-cache =
